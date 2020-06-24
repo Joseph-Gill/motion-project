@@ -28,7 +28,7 @@ lint:
   script:
     - export CI_PIPELINE_ID=$CI_PIPELINE_ID
     - export CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME
-    - docker-compose  -f docker-compose.ci.yml run backend flake8 .
+    - docker-compose  -f docker-compose.ci.yml run app flake8 .
 
 push image:
   stage: push
