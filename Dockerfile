@@ -4,9 +4,9 @@ COPY ./backend/requirements.yml /backend/requirements.yml
 
 RUN conda env create -f /backend/requirements.yml
 
-ENV PATH /opt/conda/envs/motion-backend-project/bin:$PATH
+ENV PATH /opt/conda/envs/backendProject/bin:$PATH
 
-RUN echo "source activate motion-backend-project" >~/.bashrc
+RUN echo "source activate backendProject" >~/.bashrc
 
 RUN mkdir -p /scripts
 
