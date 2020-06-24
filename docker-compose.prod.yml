@@ -4,7 +4,7 @@ services:
   app:
     env_file:
       - ./env/prod.env
-    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/docker-problems-exercise/dockerize-backend:latest
+    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:latest
     volumes:
       - static-files:/static
       - media-files:/media
