@@ -33,7 +33,8 @@ class CreateFriendRequestView(CreateAPIView):
         try:
             target_user = self.get_object()
             current_user = self.request.user
-            new_friend_request = FriendRequest.objects.create(status='P', requester=current_user, requested=target_user)
+            new_friend_request = FriendRequest.objects.create(status='P', requester=current_user,
+                                                              requested=target_user)
             serializer = self.get_serializer(new_friend_request)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except IntegrityError:
@@ -50,5 +51,3 @@ class RetrieveUpdateDestroyUserFriendRequestView(RetrieveUpdateDestroyAPIView):
     serializer_class = ListFriendRequestSerializer
     lookup_url_kwarg = 'request_id'
     permission_classes = [IsRequesterOrRequested]
-
-

@@ -29,5 +29,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'User Profile {self.pk}: for {self.user.username}'
-
-

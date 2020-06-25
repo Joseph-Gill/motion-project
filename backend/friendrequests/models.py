@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import models
 
 
