@@ -1,10 +1,9 @@
 from rest_framework import serializers
-
 from posts.models import Post
 from users.serialziers import UserSerializer
 
 
-class ListPostSerializer(serializers.ModelSerializer):
+class SharedPostSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False, read_only=True)
 
     amount_of_likes = serializers.SerializerMethodField()
@@ -12,15 +11,21 @@ class ListPostSerializer(serializers.ModelSerializer):
     def get_amount_of_likes(self, obj):
         return len(obj.likes.all())
 
-    amount_of_shares = serializers.SerializerMethodField()
+    class Meta:
+        model = Post
+        fields = ['id', 'content', 'amount_of_likes', 'created', 'updated', 'user']
 
-    def get_amount_of_shares(self, obj):
-        return len(obj.users_who_shared.all())
+
+class ListPostSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=False, read_only=True)
+
+    shared_post = SharedPostSerializer()
+
+    amount_of_likes = serializers.SerializerMethodField()
+
+    def get_amount_of_likes(self, obj):
+        return len(obj.likes.all())
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content', 'amount_of_likes', 'amount_of_shares', 'created', 'updated', 'user']
-
-
-class CommentPostSerializer(serializers.ModelSerializer):
-    pass
+        fields = ['id', 'content', 'shared_post', 'amount_of_likes', 'created', 'updated', 'user']

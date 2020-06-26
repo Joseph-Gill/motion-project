@@ -6,8 +6,7 @@ from rest_framework.response import Response
 
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly, ReadOnly
-from posts.serializers import ListPostSerializer, CommentPostSerializer
-from userprofiles.models import UserProfile
+from posts.serializers import ListPostSerializer
 
 
 class ListCreatePostsView(ListCreateAPIView):
@@ -16,14 +15,26 @@ class ListCreatePostsView(ListCreateAPIView):
     Returns all the Posts
 
     post:
-    Creates a new post instance by the current user and returns it
+    Creates a new post instance by the current user with the option to share a different post and returns it
     """
-    queryset = Post.objects.all()
-    serializer_class = ListPostSerializer
     permission_classes = [IsAuthenticated | ReadOnly]
+    serializer_class = ListPostSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def list(self, request, *args, **kwargs):
+        queryset = Post.objects.all().order_by('-created')
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            shared_post = Post.objects.get(id=self.request.data.get("shared_post"))
+            serializer.save(user=self.request.user, shared_post=shared_post)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Post.DoesNotExist:
+            serializer.save(user=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class RetrieveUpdateDestroyPostView(RetrieveUpdateDestroyAPIView):
@@ -116,26 +127,6 @@ class ListUserLikedPostsView(ListAPIView):
         return Response(serializer.data)
 
 
-class TogglePostSharesView(CreateAPIView):
-    """
-    post:
-    Toggle sharing post by logged in user
-    """
-    queryset = Post
-    serializer_class = ListPostSerializer
-    lookup_url_kwarg = 'post_id'
-
-    def create(self, request, *args, **kwargs):
-        target_post = self.get_object()
-        target_profile = UserProfile.objects.all().filter(user=request.user)
-        if target_profile[0] in target_post.users_who_shared.all():
-            target_post.users_who_shared.remove(target_profile[0])
-        else:
-            target_post.users_who_shared.add(target_profile[0])
-        toggle_post_data = self.get_serializer(target_post).data
-        return Response(toggle_post_data, status=status.HTTP_202_ACCEPTED)
-
-
 class ListCreateCommentView(ListCreateAPIView):
     queryset = Post
-    serializer_class = CommentPostSerializer
+    pass

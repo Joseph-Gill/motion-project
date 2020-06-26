@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'registrationprofiles',
     'friendrequests',
+    'comments',
     'django_filters',
 ]
 

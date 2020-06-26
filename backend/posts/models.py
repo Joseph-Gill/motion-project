@@ -5,8 +5,6 @@ User = get_user_model()
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=100)
-
     content = models.TextField()
 
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -23,6 +21,14 @@ class Post(models.Model):
         related_name='posts',
         on_delete=models.SET_NULL,
         null=True)
+
+    shared_post = models.ForeignKey(
+        'Post',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='being_shared_by',
+    )
 
     def __str__(self):
         title = f'{self.title[0:30]}...' if len(self.title) > 30 else self.title

@@ -16,16 +16,5 @@ class UserProfile(models.Model):
         related_name='followees',
         blank=True)
 
-    shared_posts = models.ManyToManyField(
-        to=Post,
-        related_name='users_who_shared',
-        blank=True)
-
-    user_comments = models.ManyToManyField(
-        to=Post,
-        related_name='comments',
-        blank=True,
-    )
-
     def __str__(self):
         return f'User Profile {self.pk}: for {self.user.username}'
