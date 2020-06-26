@@ -1,14 +1,14 @@
 version: '3'
 services:
   app:
-    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:latest
+    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:master
     env_file:
       - ./env/dev.env
     ports:
       - 8000:8000
     volumes:
       - ./app:/app
-    command: "gunicorn -w 4 -b 0.0.0.0:8000 backend_project.wsgi:application --reload"
+    command: "python manage.py runserver 0:8000"
     depends_on:
       - db
 
@@ -21,12 +21,12 @@ services:
     ports:
       - '5432:5432'
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - 8080:80
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
+#  nginx:
+#    image: nginx:latest
+#    ports:
+#      - 8080:80
+#    volumes:
+#      - ./nginx:/etc/nginx/conf.d
 
 volumes:
   postgres_db:
