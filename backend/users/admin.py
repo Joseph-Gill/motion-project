@@ -16,8 +16,10 @@ class CustomUserModel(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'username', 'password1', 'password2'),
+            'Files': ('avatar', )
         }),
     )
+
     ordering = ['email']
 
 

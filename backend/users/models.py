@@ -25,5 +25,10 @@ class User(AbstractUser):
         blank=True,
     )
 
+    avatar = models.ImageField(
+        null=True,
+        blank=True,
+    )
+
     def __str__(self):
         return f'User #{self.id} {self.email}'

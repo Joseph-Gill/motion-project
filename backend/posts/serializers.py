@@ -19,7 +19,7 @@ class SharedPostSerializer(serializers.ModelSerializer):
 class ListPostSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=False, read_only=True)
 
-    shared_post = SharedPostSerializer()
+    shared_post = SharedPostSerializer(required=False, read_only=True)
 
     amount_of_likes = serializers.SerializerMethodField()
 
@@ -28,4 +28,4 @@ class ListPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'content', 'shared_post', 'amount_of_likes', 'created', 'updated', 'user']
+        fields = ['id', 'user', 'content', 'shared_post', 'amount_of_likes', 'created', 'updated']
