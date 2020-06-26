@@ -7,13 +7,13 @@ from userprofiles.models import UserProfile
 class Comment(models.Model):
     content = models.TextField()
 
-    post_comment = models.ForeignKey(
+    post = models.ForeignKey(
         to=Post,
         related_name='comments',
         on_delete=models.CASCADE,
     )
 
-    user = models.ForeignKey(
+    user_profile = models.ForeignKey(
         to=UserProfile,
         related_name='post_comments',
         on_delete=models.CASCADE,

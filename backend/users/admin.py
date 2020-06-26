@@ -16,11 +16,20 @@ class CustomUserModel(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'username', 'password1', 'password2'),
-            'Files': ('avatar', )
         }),
     )
-
-    ordering = ['email']
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'location', 'about_me', 'things_user_likes')}),
+        ('Files', {'fields': ('avatar',)}),
+        ('Permissions', {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    readonly_fields = ('date_joined', 'last_login')
+    list_display = ('pk', 'username', 'email', 'is_staff')
+    ordering = ('-email',)
 
 
 @receiver(post_save, sender=User)

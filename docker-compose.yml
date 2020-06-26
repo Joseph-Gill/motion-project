@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:master
+    image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:latest
     env_file:
       - ./env/dev.env
     ports:
