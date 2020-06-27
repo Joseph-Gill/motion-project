@@ -7,9 +7,14 @@ from friendrequests.models import FriendRequest
 from friendrequests.permissions import IsRequesterOrRequested
 from friendrequests.serializers import ListFriendRequestSerializer
 from users.serialziers import UserSerializer
+from django.core.mail import send_mail
 
 
 class ListUserFriendsView(ListAPIView):
+    """
+    get:
+    Returns all logged in user friends
+    """
     serializer_class = UserSerializer
 
     def list(self, request, *args, **kwargs):
@@ -24,6 +29,10 @@ class ListUserFriendsView(ListAPIView):
 
 
 class CreateFriendRequestView(CreateAPIView):
+    """
+    post:
+    Create and return a new friend request
+    """
     User = get_user_model()
     queryset = User
     serializer_class = ListFriendRequestSerializer
@@ -36,17 +45,41 @@ class CreateFriendRequestView(CreateAPIView):
             new_friend_request = FriendRequest.objects.create(status='P', requester=current_user,
                                                               requested=target_user)
             serializer = self.get_serializer(new_friend_request)
+            send_mail(
+                'Test Email',
+                'Test Message',
+                'students@propulsionacademy.com',
+                [target_user.email],
+                fail_silently=False,
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except IntegrityError:
             return Response({"detail": "This friend request already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListUserFriendRequestsView(ListAPIView):
+    """
+    get:
+    Returns all the logged in users friend requests, status P = Pending, A = Accepted, R = Rejected
+    """
     queryset = FriendRequest.objects.all()
     serializer_class = ListFriendRequestSerializer
 
 
 class RetrieveUpdateDestroyUserFriendRequestView(RetrieveUpdateDestroyAPIView):
+    """
+    get:
+    Returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
+
+    put:
+    Updates and returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
+
+    patch:
+    Partially updates and returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
+
+    delete:
+    Delete a specific friend request, returns no content status 204
+    """
     queryset = FriendRequest
     serializer_class = ListFriendRequestSerializer
     lookup_url_kwarg = 'request_id'

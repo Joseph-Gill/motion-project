@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from django.db.models import Q
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly, ReadOnly
 from posts.serializers import ListPostSerializer
@@ -71,7 +71,7 @@ class ListSpecificUserPostsView(ListAPIView):
     def list(self, request, *args, **kwargs):
         target_user = self.get_object()
         post_data = target_user.posts.all().order_by('-created')
-        serializer = ListPostSerializer(post_data, many=True)
+        serializer = self.get_serializer(post_data, many=True)
         return Response(serializer.data)
 
 
@@ -88,6 +88,32 @@ class ListUserFollowingPostsView(ListAPIView):
         post_data = []
         for user_entry in request.user.followees.all():
             post_data.extend(list(user_entry.user.posts.all()))
+        serializer = self.get_serializer(post_data, many=True)
+        return Response(serializer.data)
+
+
+class ListUserFriendsPostsView(ListAPIView):
+    """
+    get:
+    Returns all posts of the logged in user's friends
+    """
+    User = get_user_model()
+    queryset = User
+    serializer_class = ListPostSerializer
+
+    def get_all_friends(self, obj):
+        total_friends = []
+        for request_entry in list(obj.friends_requested.all()) + list(obj.friend_requests.all()):
+            if request_entry.requester != obj and request_entry.status == 'A':
+                total_friends.append(request_entry.requester)
+            if request_entry.requested != obj and request_entry.status == 'A':
+                total_friends.append(request_entry.requested)
+        return total_friends
+
+    def list(self, request, *args, **kwargs):
+        post_data = []
+        for user_entry in self.get_all_friends(request.user):
+            post_data.extend(list(user_entry.posts.all()))
         serializer = self.get_serializer(post_data, many=True)
         return Response(serializer.data)
 
@@ -127,6 +153,16 @@ class ListUserLikedPostsView(ListAPIView):
         return Response(serializer.data)
 
 
-class ListCreateCommentView(ListCreateAPIView):
-    queryset = Post
-    pass
+class SearchAllPostsView(ListAPIView):
+    """
+    get:
+    Returns all posts with content, username, user first name, or user last name matching search string
+    """
+    serializer_class = ListPostSerializer
+
+    def list(self, request, *args, **kwargs):
+        keyword = self.kwargs['search_string']
+        queryset = Post.objects.filter(Q(content__icontains=keyword) | Q(user__username__icontains=keyword) | Q(
+            user__first_name__icontains=keyword) | Q(user__last_name__icontains=keyword))
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

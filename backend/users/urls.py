@@ -1,7 +1,10 @@
 from django.urls import path
 
-from users.views import ListUsersView
+from .views import *
 
 urlpatterns = [
-    path('user/', ListUsersView.as_view()),
+    path('', ListUsersView.as_view()),
+    path('me/', RetrieveUpdateLoggedInUserView.as_view()),
+    path('<int:user_id>/', RetrieveUserView.as_view()),
+    path('search/<str:search_string>/', SearchAllUsersView.as_view()),
 ]

@@ -1,5 +1,4 @@
 from django.db import models
-
 from posts.models import Post
 from userprofiles.models import UserProfile
 

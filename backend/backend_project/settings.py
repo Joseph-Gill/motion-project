@@ -134,6 +134,14 @@ MEDIA_URL = '/media/'
 # MEDIA_ROOT = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+# EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'students@propulsionacademy.com'
+EMAIL_HOST_PASSWORD = 'Ahsdfhj83j3h4rweeoiuhas83dbj3j3dmnvbl'
+EMAIL_PORT = 587
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',

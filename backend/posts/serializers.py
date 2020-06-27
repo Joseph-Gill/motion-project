@@ -13,7 +13,7 @@ class SharedPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'content', 'amount_of_likes', 'created', 'updated', 'user']
+        fields = ['id', 'content', 'amount_of_likes', 'created', 'user']
 
 
 class ListPostSerializer(serializers.ModelSerializer):
@@ -26,6 +26,17 @@ class ListPostSerializer(serializers.ModelSerializer):
     def get_amount_of_likes(self, obj):
         return len(obj.likes.all())
 
+    is_from_logged_in_user = serializers.SerializerMethodField()
+
+    def get_is_from_logged_in_user(self, obj):
+        return self.context['request'].user == obj.user
+
+    logged_in_user_liked = serializers.SerializerMethodField()
+
+    def get_logged_in_user_liked(self, obj):
+        return self.context['request'].user in obj.likes.all()
+
     class Meta:
         model = Post
-        fields = ['id', 'user', 'content', 'shared_post', 'amount_of_likes', 'created', 'updated']
+        fields = ['id', 'amount_of_likes', 'content', 'created', 'is_from_logged_in_user', 'logged_in_user_liked',
+                  'comments', 'shared_post', 'user']

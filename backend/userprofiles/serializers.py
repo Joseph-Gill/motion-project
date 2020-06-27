@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from userprofiles.models import UserProfile
 from users.serialziers import UserSerializer
 

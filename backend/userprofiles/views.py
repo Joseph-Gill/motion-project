@@ -38,10 +38,8 @@ class ListUserFollowersView(ListAPIView):
     """
     serializer_class = UserFollowersSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.request.user.followees.all()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return self.request.user.followees.all()
 
 
 class ListUserFollowingView(ListAPIView):
