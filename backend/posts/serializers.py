@@ -36,7 +36,12 @@ class ListPostSerializer(serializers.ModelSerializer):
     def get_logged_in_user_liked(self, obj):
         return self.context['request'].user in obj.likes.all()
 
+    amount_of_shares = serializers.SerializerMethodField()
+
+    def get_amount_of_shares(self, obj):
+        return len(obj.being_shared_by.all())
+
     class Meta:
         model = Post
-        fields = ['id', 'amount_of_likes', 'content', 'created', 'is_from_logged_in_user', 'logged_in_user_liked',
-                  'comments', 'shared_post', 'user']
+        fields = ['id', 'amount_of_likes', 'amount_of_shares', 'content', 'created', 'is_from_logged_in_user',
+                  'logged_in_user_liked', 'comments', 'shared_post', 'user']
