@@ -8,6 +8,7 @@ from rest_framework.documentation import include_docs_urls
 urlpatterns = [
     path('api/docs/', include_docs_urls(title='JEGill Motion Backend API', public=True, permission_classes=[])),
     path('admin/', admin.site.urls),
+    path('backend/api/auth/', include('registrationprofiles.urls')),
     path('backend/api/users/', include('users.urls')),
     path('backend/api/social/comments/', include('comments.urls')),
     path('backend/api/social/followers/', include('userprofiles.urls')),

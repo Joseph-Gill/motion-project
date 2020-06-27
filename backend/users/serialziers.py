@@ -96,4 +96,10 @@ class UserSerializer(serializers.ModelSerializer):
 class LimitedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = ['id', 'email']
+
+
+class ValidationUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'username', 'first_name', 'last_name']
