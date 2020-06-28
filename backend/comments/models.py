@@ -17,3 +17,7 @@ class Comment(models.Model):
         related_name='post_comments',
         on_delete=models.CASCADE,
     )
+
+    created = models.DateTimeField(
+        auto_now_add=True,
+    )

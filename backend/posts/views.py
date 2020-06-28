@@ -88,6 +88,7 @@ class ListUserFollowingPostsView(ListAPIView):
         post_data = []
         for user_entry in request.user.followees.all():
             post_data.extend(list(user_entry.user.posts.all()))
+        post_data.sort(key=lambda a: a.created, reverse=True)
         serializer = self.get_serializer(post_data, many=True)
         return Response(serializer.data)
 
@@ -114,6 +115,7 @@ class ListUserFriendsPostsView(ListAPIView):
         post_data = []
         for user_entry in self.get_all_friends(request.user):
             post_data.extend(list(user_entry.posts.all()))
+        post_data.sort(key=lambda a: a.created, reverse=True)
         serializer = self.get_serializer(post_data, many=True)
         return Response(serializer.data)
 

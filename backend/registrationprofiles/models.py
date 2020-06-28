@@ -14,7 +14,12 @@ class RegistrationProfile(models.Model):
     user = models.OneToOneField(
         to=User,
         on_delete=models.CASCADE,
-        related_name='registration_profile'
+        related_name='registration_profile',
+        blank=True,
+    )
+
+    email = models.EmailField(
+        unique=True,
     )
 
     code = models.CharField(
