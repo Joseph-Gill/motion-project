@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'registrationprofiles',
     'friendrequests',
     'comments',
+    'postimages',
     'django_filters',
 ]
 
