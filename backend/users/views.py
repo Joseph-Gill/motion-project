@@ -62,7 +62,7 @@ class SearchAllUsersView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         keyword = self.kwargs['search_string']
-        queryset = User.objects.filter(Q(username__icontains=keyword) | Q(first_name__icontains=keyword)
-                                       | Q(last_name__icontains=keyword))
+        queryset = User.objects.filter(Q(username__icontains=keyword) | Q(first_name__icontains=keyword) |
+                                       Q(last_name__icontains=keyword))
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
