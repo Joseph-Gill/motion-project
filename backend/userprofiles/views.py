@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage
 from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +28,12 @@ class ToggleUserFollowView(CreateAPIView):
             target_user.followees.remove(current_user_profile)
         else:
             target_user.followees.add(current_user_profile)
+            email = EmailMessage()
+            email.subject = f'{target_user.first_name}, you have a new follower!'
+            email.body = f'{current_user_profile.user.first_name} {current_user_profile.user.last_name} ' \
+                         f'has followed you.'
+            email.to = [target_user.email]
+            email.send(fail_silently=False)
         toggle_follower_data = self.get_serializer(target_user).data
         return Response(toggle_follower_data, status=status.HTTP_202_ACCEPTED)
 

@@ -16,6 +16,7 @@ class RegistrationProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='registration_profile',
         blank=True,
+        null=True,
     )
 
     email = models.EmailField(
@@ -37,4 +38,4 @@ class RegistrationProfile(models.Model):
     )
 
     def __str__(self):
-        return f'Registration Profile {self.pk}: for {self.user.username}'
+        return f'Registration Profile {self.pk}: for {self.email}'

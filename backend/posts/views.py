@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMessage
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,15 @@ class ListCreatePostsView(ListCreateAPIView):
     permission_classes = [IsAuthenticated | ReadOnly]
     serializer_class = ListPostSerializer
 
+    def get_all_friends_emails(self, obj):
+        all_friends_emails = []
+        for request_entry in list(obj.friends_requested.all()) + list(obj.friend_requests.all()):
+            if request_entry.requester != obj and request_entry.status == 'A':
+                all_friends_emails.append(request_entry.requester.email)
+            if request_entry.requested != obj and request_entry.status == 'A':
+                all_friends_emails.append(request_entry.requested.email)
+        return all_friends_emails
+
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all().order_by('-created')
         serializer = self.get_serializer(queryset, many=True)
@@ -28,12 +38,19 @@ class ListCreatePostsView(ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        friends_emails = self.get_all_friends_emails(request.user)
+        email = EmailMessage()
+        email.subject = 'A Friend made a new Post!'
+        email.body = f'{request.user.first_name} {request.user.last_name} just made a new post!'
+        email.to = friends_emails
         try:
             shared_post = Post.objects.get(id=self.request.data.get("shared_post"))
             serializer.save(user=self.request.user, shared_post=shared_post)
+            email.send(fail_silently=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Post.DoesNotExist:
             serializer.save(user=self.request.user)
+            email.send(fail_silently=False)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -49,7 +66,7 @@ class RetrieveUpdateDestroyPostView(RetrieveUpdateDestroyAPIView):
     Partially updates and returns a post based on the given id
 
     delete:
-    Deletes a recipe based on the given id and returns no content status 204
+    Deletes a post based on the given id and returns no content status 204
     """
     queryset = Post
     serializer_class = ListPostSerializer
