@@ -22,7 +22,7 @@ class FriendRequest(models.Model):
 
     requester = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='friends_requested',
+        related_name='fk_friend_requested_user',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -30,7 +30,7 @@ class FriendRequest(models.Model):
 
     requested = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='friend_requests',
+        related_name='fk_friend_requests_user',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
