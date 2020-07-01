@@ -7,7 +7,7 @@ class FriendRequest(models.Model):
     # User = get_user_model()
 
     class Meta:
-        unique_together = ['requester', 'requested']
+        unique_together = ['sender', 'receiver']
 
     FRIEND_REQUEST_CHOICES = [
         ('P', 'Pending'),
@@ -45,4 +45,4 @@ class FriendRequest(models.Model):
     )
 
     def __str__(self):
-        return f'Friend Request {self.pk}: {self.requester} to {self.requested}'
+        return f'Friend Request {self.pk}: {self.sender} to {self.receiver}'
