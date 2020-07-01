@@ -1,9 +1,10 @@
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 from django.db import models
+from django.conf import settings
 
 
 class FriendRequest(models.Model):
-    User = get_user_model()
+    # User = get_user_model()
 
     class Meta:
         unique_together = ['requester', 'requested']
@@ -20,7 +21,7 @@ class FriendRequest(models.Model):
     )
 
     requester = models.ForeignKey(
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         related_name='friends_requested',
         on_delete=models.CASCADE,
         null=True,
@@ -28,7 +29,7 @@ class FriendRequest(models.Model):
     )
 
     requested = models.ForeignKey(
-        to=User,
+        to=settings.AUTH_USER_MODEL,
         related_name='friend_requests',
         on_delete=models.CASCADE,
         null=True,
