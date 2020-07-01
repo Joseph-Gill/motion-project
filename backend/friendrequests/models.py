@@ -20,17 +20,17 @@ class FriendRequest(models.Model):
         max_length=1,
     )
 
-    requester = models.ForeignKey(
+    sender = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_friend_requested_user',
+        related_name='fk_friend_sender_user',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
 
-    requested = models.ForeignKey(
+    receiver = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_friend_requests_user',
+        related_name='fk_friend_receiver_user',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
