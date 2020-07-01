@@ -1,7 +1,5 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
-
-User = get_user_model()
 
 
 class Post(models.Model):
@@ -12,13 +10,13 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     likes = models.ManyToManyField(
-        to=User,
-        related_name='liked_posts',
+        to=settings.AUTH_USER_MODEL,
+        related_name='fk_posts_likes_user',
         blank=True)
 
     user = models.ForeignKey(
-        to=User,
-        related_name='posts',
+        to=settings.AUTH_USER_MODEL,
+        related_name='fk_posts_user',
         on_delete=models.SET_NULL,
         null=True)
 
