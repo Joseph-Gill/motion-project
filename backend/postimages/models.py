@@ -11,6 +11,11 @@ class PostImage(models.Model):
         blank=True,
     )
 
+    image = models.ImageField(
+        null=True,
+        blank=True,
+    )
+
     created = models.DateTimeField(
         auto_now_add=True,
     )

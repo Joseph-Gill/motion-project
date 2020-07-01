@@ -10,6 +10,8 @@ class Comment(models.Model):
         to=Post,
         related_name='comments',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     user_profile = models.ForeignKey(

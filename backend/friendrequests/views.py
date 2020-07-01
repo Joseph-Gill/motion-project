@@ -76,9 +76,6 @@ class RetrieveUpdateDestroyUserFriendRequestView(RetrieveUpdateDestroyAPIView):
     get:
     Returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
 
-    put:
-    Updates and returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
-
     patch:
     Partially updates and returns a specific friend request, status P = Pending, A = Accepted, R = Rejected
 
@@ -89,6 +86,7 @@ class RetrieveUpdateDestroyUserFriendRequestView(RetrieveUpdateDestroyAPIView):
     serializer_class = ListFriendRequestSerializer
     lookup_url_kwarg = 'friend_request_id'
     permission_classes = [IsRequesterOrRequested]
+    http_method_names = ['get', 'patch', 'delete']
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)

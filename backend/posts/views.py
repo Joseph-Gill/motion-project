@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly, ReadOnly
-from posts.serializers import ListPostSerializer
+from posts.serializers import GetPostSerializer, CreatePostSerializer
 
 
 class ListCreatePostsView(ListCreateAPIView):
@@ -19,7 +19,11 @@ class ListCreatePostsView(ListCreateAPIView):
     Creates a new post instance by the current user with the option to share a different post and returns it
     """
     permission_classes = [IsAuthenticated | ReadOnly]
-    serializer_class = ListPostSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return GetPostSerializer
+        return CreatePostSerializer
 
     def get_all_friends_emails(self, obj):
         all_friends_emails = []
@@ -59,9 +63,6 @@ class RetrieveUpdateDestroyPostView(RetrieveUpdateDestroyAPIView):
     get:
     Returns a post based on the given id
 
-    put:
-    Updates and returns a post based on the given id
-
     patch:
     Partially updates and returns a post based on the given id
 
@@ -69,9 +70,14 @@ class RetrieveUpdateDestroyPostView(RetrieveUpdateDestroyAPIView):
     Deletes a post based on the given id and returns no content status 204
     """
     queryset = Post
-    serializer_class = ListPostSerializer
     lookup_url_kwarg = 'post_id'
     permission_classes = [IsAuthorOrReadOnly]
+    http_method_names = ['get', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return GetPostSerializer
+        return CreatePostSerializer
 
 
 class ListSpecificUserPostsView(ListAPIView):
@@ -81,7 +87,7 @@ class ListSpecificUserPostsView(ListAPIView):
     """
     User = get_user_model()
     queryset = User
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
     lookup_url_kwarg = 'user_id'
     permission_classes = [IsAuthenticated | ReadOnly]
 
@@ -99,7 +105,7 @@ class ListUserFollowingPostsView(ListAPIView):
     """
     User = get_user_model()
     queryset = User
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
 
     def list(self, request, *args, **kwargs):
         post_data = []
@@ -117,7 +123,7 @@ class ListUserFriendsPostsView(ListAPIView):
     """
     User = get_user_model()
     queryset = User
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
 
     def get_all_friends(self, obj):
         total_friends = []
@@ -143,7 +149,7 @@ class TogglePostLikesView(CreateAPIView):
     Toggle liking post by logged in user
     """
     queryset = Post
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
     lookup_url_kwarg = 'post_id'
     permission_classes = [IsAuthenticated | ReadOnly]
 
@@ -162,7 +168,7 @@ class ListUserLikedPostsView(ListAPIView):
     get:
     Returns all posts the logged is user has liked
     """
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
 
     def list(self, request, *args, **kwargs):
         User = get_user_model()
@@ -177,7 +183,7 @@ class SearchAllPostsView(ListAPIView):
     get:
     Returns all posts with content, username, user first name, or user last name matching search string
     """
-    serializer_class = ListPostSerializer
+    serializer_class = GetPostSerializer
 
     def list(self, request, *args, **kwargs):
         keyword = self.kwargs['search_string']
