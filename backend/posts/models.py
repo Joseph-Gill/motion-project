@@ -11,12 +11,12 @@ class Post(models.Model):
 
     likes = models.ManyToManyField(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_posts_likes_user',
+        related_name='liked_posts',
         blank=True)
 
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_posts_user',
+        related_name='posts',
         on_delete=models.SET_NULL,
         null=True)
 

@@ -1,13 +1,11 @@
-# from django.contrib.auth import get_user_model
 from django.db import models
 from django.conf import settings
 
 
 class FriendRequest(models.Model):
-    # User = get_user_model()
 
     class Meta:
-        unique_together = ['sender', 'receiver']
+        unique_together = ['requester', 'requested']
 
     FRIEND_REQUEST_CHOICES = [
         ('P', 'Pending'),
@@ -20,17 +18,17 @@ class FriendRequest(models.Model):
         max_length=1,
     )
 
-    sender = models.ForeignKey(
+    requester = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_friend_sender_user',
+        related_name='friends_requested',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
 
-    receiver = models.ForeignKey(
+    requested = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
-        related_name='fk_friend_receiver_user',
+        related_name='friend_requests',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -45,4 +43,4 @@ class FriendRequest(models.Model):
     )
 
     def __str__(self):
-        return f'Friend Request {self.pk}: {self.sender} to {self.receiver}'
+        return f'Friend Request {self.pk}: {self.requester} to {self.requested}'
