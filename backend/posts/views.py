@@ -173,3 +173,16 @@ class ListUserLikedPostsView(ListAPIView):
         post_data = target_user[0].liked_posts.all().order_by('-created')
         serializer = self.get_serializer(post_data, many=True)
         return Response(serializer.data)
+
+
+class ListUsersPostsView(ListAPIView):
+    """
+    get:
+    Returns all the posts of the logged in User
+    """
+    serializer_class = GetPostSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = request.user.posts.all().order_by('-created')
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

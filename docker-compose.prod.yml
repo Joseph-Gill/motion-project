@@ -7,7 +7,7 @@ services:
     image: registry.gitlab.propulsion-home.ch/joseph-gill/week-7/day-3:latest
     volumes:
       - static-files:/static
-      - media-files:/media
+      - media-files:/backend/media
       - frontend:/frontend/build
     command: 'sh /scripts/run.sh'
     depends_on:

@@ -3,6 +3,7 @@ from posts.views import *
 
 urlpatterns = [
     path('', ListCreatePostsView.as_view()),
+    path('me/', ListUsersPostsView.as_view()),
     path('<int:post_id>/', RetrieveUpdateDestroyPostView.as_view()),
     path('user/<int:user_id>/', ListSpecificUserPostsView.as_view()),
     path('following/', ListUserFollowingPostsView.as_view()),
