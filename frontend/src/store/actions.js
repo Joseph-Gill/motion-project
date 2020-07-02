@@ -123,7 +123,7 @@ export const newUserCode = (data) => (dispatch, getState) => {
 	axios
 		.post(url, emailData, baseHeaders)
 		.then((response) => {
-			if (response.status === 200) {
+			if (response.status === 201) {
 				dispatch(validateCodeSentAction(data));
 			}
 		})
@@ -137,7 +137,7 @@ export const validateNewUser = (data) => (dispatch, getState) => {
 	axios
 		.post(url, data, baseHeaders)
 		.then((response) => {
-			if (response.status === 200) {
+			if (response.status === 201) {
 				dispatch(validateCompleteAction());
 			}
 		})
