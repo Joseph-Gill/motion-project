@@ -7,10 +7,9 @@ export default WrappedComponent => {
 
         useEffect(() => {
             const userRedirect = () => {
-                const path = location.pathname;
-                if(path.includes('auth') && authenticated) {
+                if(authenticated) {
                     history.push('/feed');
-                } else if (!path.includes('auth') && !authenticated) {
+                } else {
                     history.push('auth/login');
                 }
 
