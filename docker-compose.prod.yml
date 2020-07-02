@@ -8,6 +8,7 @@ services:
     volumes:
       - static-files:/static
       - media-files:/media
+      - frontend:/frontend/build
     command: 'sh /scripts/run.sh'
     depends_on:
       - db

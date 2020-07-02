@@ -53,19 +53,3 @@ class RetrieveUserView(RetrieveAPIView):
     queryset = User
     serializer_class = UserSerializer
     lookup_url_kwarg = 'user_id'
-
-
-class SearchAllUsersView(ListAPIView):
-    """
-    get:
-    Returns all users with username, first name, or last name matching search string
-    """
-    User = get_user_model()
-    serializer_class = UserSerializer
-
-    def list(self, request, *args, **kwargs):
-        keyword = self.kwargs['search_string']
-        queryset = User.objects.filter(Q(username__icontains=keyword) | Q(first_name__icontains=keyword) |
-                                       Q(last_name__icontains=keyword))
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
