@@ -1,37 +1,69 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import {GlobalStyle} from './style';
+import authComponent from './HOC';
+import SignUp from './routes/signup';
+import Landing from './routes/landing';
+import Congrats from './routes/congrats';
+import FeedLiked from './routes/feedLiked';
+import FeedFriends from './routes/feedFriends';
+import FeedFollow from './routes/feedFollow';
+import Friends from './routes/friends';
+import Verification from './routes/verification';
+import store from './store/store';
+import {tokenSignIn} from './store/actions';
 import * as serviceWorker from './serviceWorker';
-
-//Redux Setup
-import {store} from "./store";
-import {Provider} from "react-redux";
-
-//Styled-Components Setup
-import {ThemeProvider} from "styled-components";
-import {GlobalStyle, theme} from './style';
-
-//Route Setup
-import Routes from './routes';
-
-//Check and Dispatch to keep the session
-import {login} from './store/actions/loginActions'
-
-import './index.css'
+import './index.css';
 
 const token = localStorage.getItem('token');
-if (token) {
-    store.dispatch(login(token))
-}
-
+const user = localStorage.getItem('user');
+if (token && user) store.dispatch(tokenSignIn(token, JSON.parse(user)));
 
 ReactDOM.render(
+    // <React.StrictMode>
     <Provider store={store}>
-        <ThemeProvider theme={theme}>
-            <GlobalStyle/>
-            <Routes/>
-        </ThemeProvider>
-    </Provider>
-    , document.getElementById('root')
+        <GlobalStyle/>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path='/' component={Landing}/>
+                <Route exact path='/signup' component={SignUp}/>
+                <Route
+                    exact
+                    path='/congrats'
+                    component={Congrats}
+                />
+                <Route
+                    exact
+                    path='/verification'
+                    component={Verification}
+                />
+                <Route
+                    exact
+                    path='/feed/liked'
+                    component={authComponent(FeedLiked)}
+                />
+                <Route
+                    exact
+                    path='/feed/friends'
+                    component={authComponent(FeedFriends)}
+                />
+                <Route
+                    exact
+                    path='/feed/follow'
+                    component={authComponent(FeedFollow)}
+                />
+                <Route
+                    exact
+                    path='/friends'
+                    component={authComponent(Friends)}
+                />
+            </Switch>
+        </BrowserRouter>
+    </Provider>,
+    // </React.StrictMode>
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

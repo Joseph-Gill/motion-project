@@ -1,30 +1,31 @@
 import React, {useEffect} from 'react';
-import {connect} from 'react-redux'
+import {compose} from 'redux';
+import {connect} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
-export default WrappedComponent => {
-    const AuthComponent = (props) => {
-        const {authenticated, history, location} = props;
+const authComponent = (WrappedComponent) => (props) => {
+    const {push} = useHistory();
 
-        useEffect(() => {
-            const userRedirect = () => {
-                if(authenticated) {
-                    history.push('/feed');
-                } else {
-                    history.push('auth/login');
-                }
+    const {state: {token}} = props;
 
-            };
-            userRedirect()
-        }, [authenticated, history, location]);
-        return <WrappedComponent {...props} />
-    }
-    const mapStateToProps = (state) => ({
-        authenticated: state.loginReducer.authenticated
-    });
-    return connect(mapStateToProps)(AuthComponent);
+    useEffect(() => {
+        if (!token) {
+            push('/')
+        }
+    })
+
+    return <WrappedComponent/>
+
 }
 
-// TODO consider replacing this HOC with a simple redirect in the <App> using the same kind of logic inside a useEffect
-// TODO refresh token every so often to prevent access from expiring
-// TODO when token expired, try refresh first before redirect to login page
-// TODO needs a check to redirect from baseURL to either /feed or /login
+const mapStateToProps = (state) => {
+    return {
+        state: state.signInReducer
+    }
+}
+
+const composedComponent = compose(
+    connect(mapStateToProps), authComponent
+);
+
+export default composedComponent;
