@@ -29,5 +29,4 @@ class Post(models.Model):
     )
 
     def __str__(self):
-        title = f'{self.title[0:30]}...' if len(self.title) > 30 else self.title
-        return f'Post {self.pk}, {title} by User: {self.user.username}'
+        return f'Post {self.pk} by User: {self.user.username}'

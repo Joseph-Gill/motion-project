@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
 from posts.models import Post
 from posts.permissions import IsAuthorOrReadOnly, ReadOnly
 from posts.serializers import GetPostSerializer, CreatePostSerializer
@@ -13,12 +12,15 @@ from posts.serializers import GetPostSerializer, CreatePostSerializer
 class ListCreatePostsView(ListCreateAPIView):
     """
     get:
-    Returns all the Posts
+    Returns all the Posts / Searches all Posts
 
     post:
     Creates a new post instance by the current user with the option to share a different post and returns it
     """
     permission_classes = [IsAuthenticated | ReadOnly]
+    search_fields = ['content', 'user__username', 'user__first_name', 'user__last_name']
+    filter_backends = (filters.SearchFilter,)
+    queryset = Post.objects.all().order_by('-created')
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -33,11 +35,6 @@ class ListCreatePostsView(ListCreateAPIView):
             if request_entry.requested != obj and request_entry.status == 'A':
                 all_friends_emails.append(request_entry.requested.email)
         return all_friends_emails
-
-    def list(self, request, *args, **kwargs):
-        queryset = Post.objects.all().order_by('-created')
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -175,19 +172,4 @@ class ListUserLikedPostsView(ListAPIView):
         target_user = User.objects.filter(id=request.user.id)
         post_data = target_user[0].liked_posts.all().order_by('-created')
         serializer = self.get_serializer(post_data, many=True)
-        return Response(serializer.data)
-
-
-class SearchAllPostsView(ListAPIView):
-    """
-    get:
-    Returns all posts with content, username, user first name, or user last name matching search string
-    """
-    serializer_class = GetPostSerializer
-
-    def list(self, request, *args, **kwargs):
-        keyword = self.kwargs['search_string']
-        queryset = Post.objects.filter(Q(content__icontains=keyword) | Q(user__username__icontains=keyword) | Q(
-            user__first_name__icontains=keyword) | Q(user__last_name__icontains=keyword))
-        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

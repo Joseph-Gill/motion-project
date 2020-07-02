@@ -5,18 +5,20 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from posts.permissions import ReadOnly
 from users.serialziers import UserSerializer
-
-User = get_user_model()
+from rest_framework import filters
 
 
 class ListUsersView(ListAPIView):
     """
     get:
-    Returns all users
+    Returns all users or Search all users
     """
+    User = get_user_model()
     permission_classes = [IsAuthenticated | ReadOnly]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    search_fields = ['username', 'first_name', 'last_name', 'location']
+    filter_backends = (filters.SearchFilter,)
 
 
 class RetrieveUpdateLoggedInUserView(RetrieveUpdateAPIView):
@@ -27,6 +29,7 @@ class RetrieveUpdateLoggedInUserView(RetrieveUpdateAPIView):
     put:
     Updates the logged in user's public information
     """
+    User = get_user_model()
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
