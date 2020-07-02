@@ -135,7 +135,7 @@ export const newUserCode = (data) => (dispatch, getState) => {
 export const validateNewUser = (data) => (dispatch, getState) => {
 	const url = baseUrl + validateUserTag;
 	axios
-		.patch(url, data, baseHeaders)
+		.post(url, data, baseHeaders)
 		.then((response) => {
 			if (response.status === 200) {
 				dispatch(validateCompleteAction());
