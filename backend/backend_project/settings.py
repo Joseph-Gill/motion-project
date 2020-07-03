@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'comments',
     'postimages',
     'django_filters',
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
