@@ -12,4 +12,5 @@
       - django-filter==2.3.0
       - gunicorn==20.0.4
       - Pillow==7.1.2
+      - django-cors-headers==3.4.0
   name: backendProject
